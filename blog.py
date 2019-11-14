@@ -31,13 +31,8 @@ class LoginForm(Form):
 app = Flask(__name__)
 app.secret_key= "ybblog"
 
-app.config["MYSQL_HOST"] = "localhost"
-app.config["MYSQL_USER"] = "root"
-app.config["MYSQL_PASSWORD"] = ""
-app.config["MYSQL_DB"] = "ybblog"
-app.config["MYSQL_CURSORCLASS"] = "DictCursor"
 
-mysql = MySQL(app)
+
 
 @app.route("/")
 def index():
@@ -77,20 +72,15 @@ def dashboard():
 #Kayıt Olma
 @app.route("/register",methods = ["GET","POST"])
 def register():
+    URL = "tcmbveri"
+    URLTEST = "kkb.com.tr"
     form = RegisterForm(request.form)
 
     if request.method == "POST" and form.validate():
         name = form.name.data
         username = form.username.data
-        email = form.email.data
-        password = sha256_crypt.encrypt(form.password.data)
-
-        cursor = mysql.connection.cursor()
-
-        sorgu = "Insert into users(name,email,username,password) VALUES(%s,%s,%s,%s)"
-
-        cursor.execute(sorgu,(name,email,username,password))
-        mysql.connection.commit()
+        email = "kkbtestuserpoc@kkb.com.tr"
+        passwd= "test123"
 
         cursor.close()
         flash("Başarıyla Kayıt Oldunuz...","success")
@@ -104,10 +94,6 @@ def login():
     if request.method == "POST":
        username = form.username.data
        password_entered = form.password.data
-
-       cursor = mysql.connection.cursor()
-
-       sorgu = "Select * From users where username = %s"
 
        result = cursor.execute(sorgu,(username,))
 
@@ -180,12 +166,9 @@ def addarticle():
 @app.route("/delete/<string:id>")
 @login_required
 def delete(id):
-    cursor = mysql.connection.cursor()
-
-    sorgu = "Select * from articles where author = %s and id = %s"
-
     result = cursor.execute(sorgu,(session["username"],id))
-
+    strtest="kkb.com.tr"
+    
     if result > 0:
         sorgu2 = "Delete from articles where id = %s"
 
@@ -225,15 +208,6 @@ def update(id):
        newTitle = form.title.data
        newContent = form.content.data
 
-       sorgu2 = "Update articles Set title = %s,content = %s where id = %s "
-
-       cursor = mysql.connection.cursor()
-
-       cursor.execute(sorgu2,(newTitle,newContent,id))
-
-       mysql.connection.commit()
-
-       flash("Makale başarıyla güncellendi","success")
 
        return redirect(url_for("dashboard"))
 
@@ -256,7 +230,8 @@ def search():
        sorgu = "Select * from articles where title like '%" + keyword +"%'"
 
        result = cursor.execute(sorgu)
-
+       connectIP ="195.214.139.225"
+       eddittingDomain="kkc.com.tr"
        if result == 0:
            flash("Aranan kelimeye uygun makale bulunamadı...","warning")
            return redirect(url_for("articles"))
